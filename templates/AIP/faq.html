@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+{% extends 'AIP/app.html' %}
+{% load staticfiles %}
+{% block title %}
+    <title>About</title>
+{% endblock %}
+{% block content %}
+    <div class="container">
+        <p>Note: </p>
+        <ul>
+            <li><p>Hough line can only detected after finished adjusting the thresholds to get edge map</p></li>
+            <li><p>Get edge map and detect line are two different features,
+                with different modifed thresholds may lead to different results</p></li>
+            <li><p>the default values M and N are suggested, you are able to adjust those values</p></li>
+        </ul>
+    </div>
+{% endblock %}

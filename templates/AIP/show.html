@@ -1,0 +1,187 @@
+<!doctype html>
+{% load staticfiles %}
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>show</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css" integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://getbootstrap.com/docs/4.2/examples/starter-template/starter-template.css">
+    <link rel="stylesheet" href="{% static 'css/master.css' %}">
+    <!--<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>-->
+    <!--<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.6/umd/popper.min.js" integrity="sha384-wHAiFfRlMFy6i5SRaxvfOCifBUQy1xHdJ/yoi7FRNXMRBu5WHdZYu1hA6ZOblgut" crossorigin="anonymous"></script>-->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/js/bootstrap.min.js" integrity="sha384-B0UglyR+jN6CkvvICOB2joaf5I4l3gm9GU6Hc1og6Ls7i6U/mkkaduKaBhlAXv9k" crossorigin="anonymous"></script>
+    <style>
+         /* The grid: Four equal columns that floats next to each other */
+        .column {
+          float: left;
+          width: 25%;
+          padding: 5px;
+        }
+
+        /* Style the images inside the grid */
+        .column img {
+          opacity: 0.8;
+          cursor: pointer;
+        }
+
+        .column img:hover {
+          opacity: 1;
+        }
+
+        /* Clear floats after the columns */
+        .row:after {
+          content: "";
+          display: table;
+          clear: both;
+        }
+
+        /* The expanding image container (positioning is needed to position the close button and the text) */
+        .container-mod {
+          position: relative;
+          display: none;
+        }
+
+        /* Expanding image text */
+        #imgtext {
+          position: absolute;
+          bottom: 15px;
+          left: 15px;
+          color: white;
+          font-size: 20px;
+          background-color:black;
+        }
+
+        /* Closable button inside the image */
+        .closebtn {
+          position: absolute;
+          top: 10px;
+          right: 15px;
+          color: white;
+          font-size: 30px;
+          cursor: pointer;
+          background-color:red;
+        }
+    </style>
+  </head>
+  <body>
+    <nav class="navbar navbar-expand-md navbar-dark bg-dark fixed-top">
+      <a class="navbar-brand" href="{% url 'AIP:index' %}">AIP</a>
+      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarsExampleDefault" aria-controls="navbarsExampleDefault" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarsExampleDefault">
+        <ul class="navbar-nav mr-auto">
+          <li class="nav-item">
+            <a class="nav-link" href="{% url 'AIP:index' %}">Home</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="{% url 'AIP:about' %}">About</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="{% url 'AIP:faq' %}">FAQ</a>
+          </li>
+        </ul>
+      </div>
+    </nav>
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-sm-9">
+                {% if image_name %}
+                 <!-- The grid: three columns -->
+                <div class="row">
+                      <div class="column">
+                        {% with 'images/'|add:image_name as image %}
+                            <img src="{% static image %}" alt="Origin Image" onclick="myFunction(this);" style="width: 55%">
+                        {% endwith %}
+                      </div>
+                    {% if hadEdgeMap %}
+                        <div class="column">
+                            <img src="{% static 'images/edge_map.png' %}" alt='Edge Map' onclick="myFunction(this);" style="width: 55%">
+                        </div>
+                    {% endif %}
+                    {% if hadLine %}
+                        <div class="column">
+                            <img src="{% static 'images/line.png' %}" alt='Hough Line' onclick="myFunction(this);" style="width: 55%">
+                        </div>
+                        <div class="column">
+                            <img src="{% static 'images/rotated.png' %}" alt='Rotated Image' onclick="myFunction(this);" style="width: 55%">
+                        </div>
+                    {% endif %}
+                </div>
+
+                <!-- The expanding image container -->
+                <div class="container-mod">
+                  <!-- Close the image -->
+                  <span onclick="this.parentElement.style.display='none'" class="closebtn">&times;</span>
+
+                  <!-- Expanded image -->
+                  <img id="expandedImg" style="width:80%">
+
+                  <!-- Image text -->
+                  <div id="imgtext"></div>
+                </div>
+                {% else %}
+                <div class="container">
+                    <form enctype="multipart/form-data" method="POST">
+                        {{form.as_p}}
+                        {% csrf_token %}
+                        <input type="submit" class="btn btn-primary" value="Submit">
+                    </form>
+                </div>
+                {% endif %}
+            </div>
+            {% if image_name %}
+            <div class="col-sm-3" style="border-left: solid black 2px">
+                <div class="container">
+                    <form action="{% url 'AIP:canny' %}" method="POST">
+                        <p>Min Threshold: </p>
+                        <input id='min_threshold' type="range" name="min_threshold"
+                               {% if min %} value={{ min }} {% else %} value="50" {% endif %}
+                               min="0" max="255" onchange="getMin(this.value)">
+                        <p id="min_threahold_value">{% if min %} {{ min }} {% else %} 50 {% endif %}</p>
+                        <p>Max Threshold: </p>
+                        <input id='max_threshold' type="range" name="max_threshold"
+                               {% if max %} value={{ max }} {% else %} value="150" {% endif %}
+                               min="0" max="255" onchange="getMax(this.value)">
+                        <p id="max_threahold_value">{% if max %} {{ max }} {% else %} 150 {% endif %}</p>
+                        <input type="hidden" name="image_name" value={{ image_name }}>
+                        <input type="hidden" name="D" value={{ D }}>
+                        {% csrf_token %}
+                        <input type="submit" class="btn btn-primary" value="OK" id="canny-btn">
+                    </form>
+                </div>
+                <div class="container" style="padding-top: 5px">
+                    {% if hadEdgeMap %}
+                    <p>Information to detect Hough line</p>
+                    <form action="{% url 'AIP:hough' %}" method="POST">
+                        <label for="M">M(*): </label>
+                        <input type="number" name="M" required {% if M %} value={{M}} {% else %} value={{ D }} {% endif %}><br>
+                        <label for="N">N(*): </label>
+                        <input type="number" name="N" required {% if N %} value={{N}} {% else %} value={{ D }} {% endif %}><br>
+                        <label for="K">K(*): </label>
+                        <input type="number" name="K" placeholder="Number of Line" required
+                               {% if K %} value={{K}} {% else %} value="" {% endif %}><br>
+                        <input type="hidden" name="min" value={{ min }}>
+                        <input type="hidden" name="max" value={{ max }}>
+                        <input type="hidden" name="image_name" value={{ image_name }}>
+                        <input type="hidden" name="D" value={{ D }}>
+                        {% csrf_token %}
+                        <input type="submit" value="OK" class="btn btn-primary" id="hough-btn">
+                    </form>
+                    <p>(*) is required field</p>
+                    {% endif %}
+                </div>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+    <script src="{% static 'js/show.js' %}"></script>
+    </body>
+</html>
+
+
+
