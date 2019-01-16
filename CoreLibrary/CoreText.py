@@ -54,10 +54,10 @@ def img2text(src_path, write_path):
     img = cv2.adaptiveThreshold(img, 255, cv2.ADAPTIVE_THRESH_GAUSSIAN_C, cv2.THRESH_BINARY, 11, 2)
     # img = cv2.Canny(img, 100, 200)
     # img = cv2.morphologyEx(img, cv2.MORPH_TOPHAT, (5, 5))
-    cv2.imwrite(write_path+"thres.png", img)
+    cv2.imwrite(os.path.join(write_path, "thres.png"), img)
 
     #recognize text
-    result = pytesseract.image_to_string(Image.open(write_path+"thres.png"))
+    result = pytesseract.image_to_string(Image.open(os.path.join(write_path, "thres.png")))
     return result
 
 

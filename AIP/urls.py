@@ -10,4 +10,6 @@ urlpatterns =[
     url(r'^canny/', views.canny, name='canny'),
     url(r'^hough/', views.hough, name='hough'),
     url(r'^faq/', views.faq, name='faq'),
+    url(r'^extract/', views.extract, name='extract'),
+    url(r'^reset/', views.reset, name='reset'),
 ]

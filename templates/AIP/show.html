@@ -112,14 +112,14 @@
                         </div>
                     {% endif %}
                 </div>
-
+                <hr>
                 <!-- The expanding image container -->
                 <div class="container-mod">
                   <!-- Close the image -->
                   <span onclick="this.parentElement.style.display='none'" class="closebtn">&times;</span>
 
                   <!-- Expanded image -->
-                  <img id="expandedImg" style="width:80%">
+                  <img id="expandedImg" style="width:100%">
 
                   <!-- Image text -->
                   <div id="imgtext"></div>
@@ -136,6 +136,13 @@
             </div>
             {% if image_name %}
             <div class="col-sm-3" style="border-left: solid black 2px">
+                <form action="{% url 'AIP:reset' %}" method="POST">
+                    {% csrf_token %}
+                    <input type="hidden" name="image_name" value={{ image_name }}>
+                    <input type="submit" class="btn btn-danger" value="Reset">
+                </form>
+                <p>(Note: all your current images will be deleted)</p>
+                <hr>
                 <div class="container">
                     <form action="{% url 'AIP:canny' %}" method="POST">
                         <p>Min Threshold: </p>
@@ -154,8 +161,9 @@
                         <input type="submit" class="btn btn-primary" value="OK" id="canny-btn">
                     </form>
                 </div>
+                {% if hadEdgeMap %}
+                <hr>
                 <div class="container" style="padding-top: 5px">
-                    {% if hadEdgeMap %}
                     <p>Information to detect Hough line</p>
                     <form action="{% url 'AIP:hough' %}" method="POST">
                         <label for="M">M(*): </label>
@@ -173,6 +181,31 @@
                         <input type="submit" value="OK" class="btn btn-primary" id="hough-btn">
                     </form>
                     <p>(*) is required field</p>
+                {% endif %}
+                {% if hadLine %}
+                    <hr>
+                    <p>Extract Information:</p>
+                    <form action="{% url 'AIP:extract' %}" method="POST">
+                        {% csrf_token %}
+                        <input type="hidden" name="image_name" value={{ image_name }}>
+                        <input type="hidden" name="D" value={{ D }}>
+                        <input type="hidden" name="min" value={{ min }}>
+                        <input type="hidden" name="max" value={{ max }}>
+                        <input type="hidden" name="M" value={{ M }}>
+                        <input type="hidden" name="N" value={{ N }}>
+                        <input type="hidden" name="K" value={{ K }}>
+                        <input type="submit" class="btn btn-primary" value="Extract Text">
+                    </form>
+                {% endif %}
+                    <hr>
+                    {% if google_text %}
+                    <p>{{ google_text }}</p>
+                    {% endif %}
+                    {% if ocr_simple_text %}
+                    <p>{{ ocr_simple_text }}</p>
+                    {% endif %}
+                    {% if ocr_text %}
+                    <p>{{ ocr_text }}</p>
                     {% endif %}
                 </div>
             </div>
