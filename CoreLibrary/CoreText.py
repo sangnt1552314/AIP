@@ -26,12 +26,17 @@ def google_ocr(src_path):
 
     response = client.text_detection(image=image)
     texts = response.text_annotations
-    full_text = texts[0].description
-    result = []
+    if len(texts) > 0:
+        full_text = texts[0].description
+        result = []
 
-    for text in texts[0:-1]:
-        result.append(text.description)
-    return result, full_text
+        for text in texts[0:-1]:
+            result.append(text.description)
+        return result, full_text
+    else:
+        result = "None"
+        full_text = "There is no text element to extract"
+        return result, full_text
 
 def simple_img2text(src_path):
     img = Image.open(src_path)
